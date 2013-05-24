@@ -5,6 +5,10 @@
 int **inputField(void);
 int displayField(int **);
 int freeMemory(int **);
+int solveField(int **, int, int);
+int checkVertical(int **, int, int);
+int checkHorisontal(int **, int, int);
+int checkSquare(int **, int, int, int);
 
 int main()
 {
@@ -14,6 +18,21 @@ int main()
     displayField(field);
 
     freeMemory(field);
+    return 0;
+}
+
+int solveField(int **field, int x, int y)
+{
+    int i, j, value = 0;
+
+    while (value < FIELD_SIZE) {
+        if (checkHorisontal(field, y, value)
+            || checkVertical(field, x, value)
+            || checkSquare(field, x, y, value)) {
+            value++;
+        }
+    }
+
     return 0;
 }
 
@@ -55,7 +74,11 @@ int displayField(int **field)
     for (i = 0; i < FIELD_SIZE; i++) {
         printf(" |");
         for (j = 0; j < FIELD_SIZE; j++) {
-            printf("%2d", field[i][j]);
+            if (field[i][j] != 0) {
+                printf("%2d", field[i][j]);
+            } else {
+                printf("  ");
+            }
             if ((j + 1) % 3 == 0) {
                 printf(" |");
             }
@@ -78,6 +101,50 @@ int freeMemory(int **field)
         free(field[i]);
     }
     free(field);
+
+    return 0;
+}
+
+int checkVertical(int **field, int x, int value)
+{
+    int i;
+
+    for (i = 0; i < FIELD_SIZE; i++) {
+        if (field[i][x] == value) {
+            return 1;
+        }
+    }
+
+    return 0;
+}
+
+int checkHorisontal(int **field, int y, int value)
+{
+    int i;
+
+    for (i = 0; i < FIELD_SIZE; i++) {
+        if (field[y][i] == value) {
+            return 1;
+        }
+    }
+
+    return 0;
+}
+
+int checkSquare(int **field, int x, int y, int value)
+{
+    int i, j, originX, originY;
+
+    originY = y - y % 3;
+    originX = x - x % 3;
+
+    for (i = originY; i < 3; i++) {
+        for (j = originX; j < 3; j++) {
+            if (field[i][j] == value) {
+                return 1;
+            }
+        }
+    }
 
     return 0;
 }
