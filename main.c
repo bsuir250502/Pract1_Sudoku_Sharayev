@@ -15,25 +15,48 @@ int main()
     int **field;
 
     field = inputField();
+    solveField(field, 0, 0);
     displayField(field);
-
     freeMemory(field);
     return 0;
 }
 
 int solveField(int **field, int x, int y)
 {
-    int i, j, value = 0;
+    int value = 0;
 
-    while (value < FIELD_SIZE) {
+    for(value = 1; value - 1 < FIELD_SIZE; value++) {
+
+        printf("%d, %d, %d; value = %d, x = %d, y = %d \n", checkHorisontal(field, y, value), checkVertical(field, x, value), checkSquare(field, x, y, value), value, x , y);
+        
         if (checkHorisontal(field, y, value)
             || checkVertical(field, x, value)
             || checkSquare(field, x, y, value)) {
-            value++;
+            continue;
+        }
+        field[y][x] = value;
+        
+        if(x == FIELD_SIZE - 1) {
+            if(y == FIELD_SIZE - 1) {
+                printf("Sudoku is solved\n");
+                return 0;
+            }
+            x = 0;
+            y++;
+        }
+        else {
+            x++;
+        }
+        if(solveField(field, x, y) ){
+            field[y][x] = 0;
+            continue;
+        }
+        else {
+            return 0;
         }
     }
-
-    return 0;
+    //printf("Wrong condition\n");
+    return 1;
 }
 
 int **inputField(void)
