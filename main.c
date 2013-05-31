@@ -23,17 +23,15 @@ int main()
     field = inputField();
     if (solveField(field, 0, 0)) {
         printf("Wrong condition\n");
-    }
-    else {
+    } else {
         printf("Sudoku is solved\n");
     }
     displayField(field);
     freeMemory(field);
 
-
     t = clock() - t;
-    printf ("It took %f seconds.\n", ((float)t)/CLOCKS_PER_SEC);
-    printf("Number of calls of solveField() = %d", numberOfCalls);
+    printf("It took %f seconds.\n", ((float) t) / CLOCKS_PER_SEC);
+    printf("Number of calls of solveField() = %d\n", numberOfCalls);
     return 0;
 }
 
@@ -48,13 +46,13 @@ int solveField(int **field, int x, int y)
             last = 1;
         }
         nextX = 0;
-        nextY=y+1;
+        nextY = y + 1;
     } else {
-        nextX=x + 1;
+        nextX = x + 1;
         nextY = y;
     }
 
-    if(field[y][x] != 0) {
+    if (field[y][x] != 0) {
         return solveField(field, nextX, nextY);
     }
 
@@ -65,10 +63,10 @@ int solveField(int **field, int x, int y)
 
             field[y][x] = value;
 
-            if(last) {
+            if (last) {
                 return 0;
             }
-            
+
             if (solveField(field, nextX, nextY)) {
                 field[y][x] = 0;
             } else {
@@ -76,7 +74,7 @@ int solveField(int **field, int x, int y)
             }
         }
     }
-    
+
     return 1;
 }
 
@@ -111,10 +109,9 @@ int **inputField(void)
 
 int displayField(int **field)
 {
-    int i, j;
+    int i, j, thirdX = 0, thirdY = 0;
 
-    printf(" _________________________");
-    printf("\n\n");
+    printf(" _________________________\n\n");
     for (i = 0; i < FIELD_SIZE; i++) {
         printf(" |");
         for (j = 0; j < FIELD_SIZE; j++) {
@@ -123,14 +120,17 @@ int displayField(int **field)
             } else {
                 printf("  ");
             }
-            if ((j + 1) % 3 == 0) {
+            thirdX++;
+            if (thirdX == 3) {
                 printf(" |");
+                thirdX = 0;
             }
         }
+        thirdY++;
         printf("\n");
-        if ((i + 1) % 3 == 0) {
-            printf(" _________________________");
-            printf("\n\n");
+        if (thirdY == 3) {
+            printf(" _________________________\n\n");
+            thirdY = 0;
         }
     }
 
@@ -183,7 +183,7 @@ int checkSquare(int **field, int x, int y, int value)
     originX = x - x % 3;
 
     for (i = originY; i < originY + 3; i++) {
-        for (j = originX; j <originX + 3; j++) {
+        for (j = originX; j < originX + 3; j++) {
             if (field[i][j] == value) {
                 return 0;
             }
