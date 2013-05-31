@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 #define  FIELD_SIZE 9
 
 int **inputField(void);
@@ -10,50 +11,72 @@ int checkVertical(int **, int, int);
 int checkHorisontal(int **, int, int);
 int checkSquare(int **, int, int, int);
 
+int numberOfCalls = 0;
+
 int main()
 {
     int **field;
+    clock_t t;
+
+    t = clock();
 
     field = inputField();
-    solveField(field, 0, 0);
+    if (solveField(field, 0, 0)) {
+        printf("Wrong condition\n");
+    }
+    else {
+        printf("Sudoku is solved\n");
+    }
     displayField(field);
     freeMemory(field);
+
+
+    t = clock() - t;
+    printf ("It took %f seconds.\n", ((float)t)/CLOCKS_PER_SEC);
+    printf("Number of calls of solveField() = %d", numberOfCalls);
     return 0;
 }
 
 int solveField(int **field, int x, int y)
 {
-    int value = 0;
+    int value = 0, nextX, nextY, last = 0;
+
+    numberOfCalls++;
+
+    if (x == FIELD_SIZE - 1) {
+        if (y == FIELD_SIZE - 1) {
+            last = 1;
+        }
+        nextX = 0;
+        nextY=y+1;
+    } else {
+        nextX=x + 1;
+        nextY = y;
+    }
+
+    if(field[y][x] != 0) {
+        return solveField(field, nextX, nextY);
+    }
 
     for (value = 1; value - 1 < FIELD_SIZE; value++) {
-
-        printf("%d, %d, %d; value = %d, x = %d, y = %d \n", checkHorisontal(field, y, value), checkVertical(field, x,value),checkSquare(field, x, y, value), value, x, y);
-
         if (checkHorisontal(field, y, value)
             && checkVertical(field, x, value)
             && checkSquare(field, x, y, value)) {
 
             field[y][x] = value;
-            if (x == FIELD_SIZE - 1) {
-                if (y == FIELD_SIZE - 1) {
-                    printf("Sudoku is solved\n");
-                    return 0;
-                }
-                x = 0;
-                y++;
-            } else {
-                x++;
+
+            if(last) {
+                return 0;
             }
-            if (solveField(field, x, y)) {
+            
+            if (solveField(field, nextX, nextY)) {
                 field[y][x] = 0;
-                continue;
             } else {
                 return 0;
             }
         }
-
     }
-    //printf("Wrong condition\n");
+    
     return 1;
 }
 
@@ -159,8 +182,8 @@ int checkSquare(int **field, int x, int y, int value)
     originY = y - y % 3;
     originX = x - x % 3;
 
-    for (i = originY; i < 3; i++) {
-        for (j = originX; j < 3; j++) {
+    for (i = originY; i < originY + 3; i++) {
+        for (j = originX; j <originX + 3; j++) {
             if (field[i][j] == value) {
                 return 0;
             }
