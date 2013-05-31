@@ -25,35 +25,33 @@ int solveField(int **field, int x, int y)
 {
     int value = 0;
 
-    for(value = 1; value - 1 < FIELD_SIZE; value++) {
+    for (value = 1; value - 1 < FIELD_SIZE; value++) {
 
-        printf("%d, %d, %d; value = %d, x = %d, y = %d \n", checkHorisontal(field, y, value), checkVertical(field, x, value), checkSquare(field, x, y, value), value, x , y);
-        
+        printf("%d, %d, %d; value = %d, x = %d, y = %d \n", checkHorisontal(field, y, value), checkVertical(field, x,value),checkSquare(field, x, y, value), value, x, y);
+
         if (checkHorisontal(field, y, value)
-            || checkVertical(field, x, value)
-            || checkSquare(field, x, y, value)) {
-            continue;
-        }
-        field[y][x] = value;
-        
-        if(x == FIELD_SIZE - 1) {
-            if(y == FIELD_SIZE - 1) {
-                printf("Sudoku is solved\n");
+            && checkVertical(field, x, value)
+            && checkSquare(field, x, y, value)) {
+
+            field[y][x] = value;
+            if (x == FIELD_SIZE - 1) {
+                if (y == FIELD_SIZE - 1) {
+                    printf("Sudoku is solved\n");
+                    return 0;
+                }
+                x = 0;
+                y++;
+            } else {
+                x++;
+            }
+            if (solveField(field, x, y)) {
+                field[y][x] = 0;
+                continue;
+            } else {
                 return 0;
             }
-            x = 0;
-            y++;
         }
-        else {
-            x++;
-        }
-        if(solveField(field, x, y) ){
-            field[y][x] = 0;
-            continue;
-        }
-        else {
-            return 0;
-        }
+
     }
     //printf("Wrong condition\n");
     return 1;
@@ -134,11 +132,11 @@ int checkVertical(int **field, int x, int value)
 
     for (i = 0; i < FIELD_SIZE; i++) {
         if (field[i][x] == value) {
-            return 1;
+            return 0;
         }
     }
 
-    return 0;
+    return 1;
 }
 
 int checkHorisontal(int **field, int y, int value)
@@ -147,11 +145,11 @@ int checkHorisontal(int **field, int y, int value)
 
     for (i = 0; i < FIELD_SIZE; i++) {
         if (field[y][i] == value) {
-            return 1;
+            return 0;
         }
     }
 
-    return 0;
+    return 1;
 }
 
 int checkSquare(int **field, int x, int y, int value)
@@ -164,10 +162,10 @@ int checkSquare(int **field, int x, int y, int value)
     for (i = originY; i < 3; i++) {
         for (j = originX; j < 3; j++) {
             if (field[i][j] == value) {
-                return 1;
+                return 0;
             }
         }
     }
 
-    return 0;
+    return 1;
 }
